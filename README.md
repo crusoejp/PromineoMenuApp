@@ -1,1 +1,2 @@
 # PromineoMenuApp
+Open index.html
