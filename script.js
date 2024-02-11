@@ -30,12 +30,18 @@ class GroceryList {
     }
   }
 
-  getTotalCost() {
-    return this.items.reduce((total, item) => total + item.getCost(), 0);
+  removeItem(item) {
+    this.items.splice(this.items.indexOf(item), 1);
   }
 
   getItems() {
-    return this.items;
+    let string = "";
+    this.items.forEach((item, index) => {
+      string += `${index} - ${item.name} ${item.quantity} @ ${
+        item.price
+      } --- $${item.getCost()}\n`;
+    });
+    return string;
   }
 }
 
@@ -90,8 +96,7 @@ class Menu {
     this.lists.push(new GroceryList(name));
   }
 
-  // shows all lists
-  showAllLists() {
+  getAllLists() {
     let listString = "";
     this.lists.forEach((list, index) => {
       listString += `${index} - ${list.name}\n`;
@@ -99,10 +104,19 @@ class Menu {
     return listString;
   }
 
+  // shows all lists
+  showAllLists() {
+    let listString = "";
+    this.lists.forEach((list, index) => {
+      listString += `${index} - ${list.name}\n`;
+    });
+    prompt(`${listString}`);
+  }
+
   // shows a list after it's been selected
   viewList() {
     let index = prompt(
-      `Enter the index of the list you wish to view:\n${this.showAllLists()}`
+      `Enter the index of the list you wish to view:\n${this.getAllLists()}`
     );
     if (index != null && index < this.lists.length) {
       this.selectedList = this.lists[index];
@@ -129,8 +143,12 @@ class Menu {
 
   // deletes a selected list
   deleteList() {
+    let listString = "";
+    this.lists.forEach((list, index) => {
+      listString += `${index} - ${list.name}\n`;
+    });
     let index = prompt(
-      `Enter the index of the list you wish to delete:\n${this.showAllLists()}`
+      `Enter the index of the list you wish to delete:\n ${listString}`
     );
     if (index != null && index < this.lists.length) {
       this.lists.splice(index, 1);
@@ -140,6 +158,7 @@ class Menu {
   // prompts the user on the list menu
   showListMenuOptions() {
     return prompt(`
+        ${this.selectedList.name} List Menu
         0 - Exit
         1 - Add an item
         2 - Remove an item
@@ -158,23 +177,16 @@ class Menu {
   // removes an item from a list
   removeItem() {
     let index = prompt(
-      `Enter the index of the item you wish to remove:\n${this.showAllItems()}`
+      `Enter the index of the item you wish to remove:\n${this.selectedList.getItems()}`
     );
     if (index != null && index < this.selectedList.items.length) {
-      this.selectedList.items.splice(index, 1);
+      this.selectedList.removeItem(this.selectedList.items[index]);
     }
   }
 
   // shows all items in a list
   showAllItems() {
-    let itemString = "";
-    this.selectedList.items.forEach((item, index) => {
-      itemString += `${index} ${item.name} - ${item.quantity} @ $${
-        item.price
-      } --- $${item.getCost()}\n`;
-    });
-    prompt(`${itemString}`);
-    return itemString;
+    prompt(this.selectedList.getItems());
   }
 }
 
